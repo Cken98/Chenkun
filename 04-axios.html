@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        background: url("https://s3.ax1x.com/2021/01/08/suxJMQ.jpg");
+    }
+
+    #app {
+
+        color: #fff;
+        font-size: 24px;
+    }
+</style>
+
+<body>
+
+    <div id="app">
+        <ul>
+            <li v-for='item in username'>{{item}}</li>
+        </ul>
+
+
+        <button @click='num1'>我要更新数据</button>
+    </div>
+    <script src="../vue.js"></script>
+
+    <script type="text/javascript" src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.js"></script>
+
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                fruits: ['apple', 'pear', 'banana', 'orange'],
+                msg: 'aaa',
+                num: 0,
+                num2: 1111111,//自娱自乐，不会调用更新的两个方法
+                username: []
+            },
+            methods: {
+                submit() {
+                    console.log('我来到了submit里面')
+                },
+                d() {
+                    console.log('进入d里面了')
+                },
+                num1() {
+                    console.log('我进入num1里面了')
+                    axios({
+                        url: 'http://localhost:5006/vuestudy',
+                        method: 'get',
+                        // params: {
+                        //     username: '哈哈哈',
+
+                        // }
+                    }).then(response => {
+                        console.log(response)
+                        console.log(response.data.username);
+                        for (eve in response.data) {
+                            // this.username = response.data[eve].username
+
+                            this.username.push(response.data[eve].username)
+
+                        }
+
+
+                    }).catch(error => {
+                        console.log(error)
+                    })
+
+                },
+
+            },
+            //创建之前，new操作部署过程是需要时间的，现在这个beforeCreate阶段部署还没全部完成
+            beforeCreate() {
+                //能进来，运行正常
+                console.log('我进入了生命周期函数的beforeCreate了');
+                console.log(this.data);//现在还拿不到所部署的数据
+                this.submit;//无法调用，因为部署未完成
+
+            },
+            //创建完成，new操作的部署已经完成，可以调用data数据和方法
+            created() {
+
+                //promise解决
+
+
+
+
+
+
+                //能进来，运行正常
+                console.log('我进入了生命周期函数的created了');
+                console.log(this._data.fruits);//现在可以拿到部署的数据了
+                this.submit()//也可以调用部署的方法了
+
+            },
+            //created虽然架构完成了数据，但是只在自己的model中，没有经过算法和dom元素的比对和插入
+            //中间要经过VUE的算法和dom的比对和插入的操作
+            //数据渲染基本完成，就差最后给到页面
+            //这一层就是最后的审核
+            //用户还看不到
+            beforeMount() {
+                //能进来，运行正常
+                console.log('我进入了生命周期函数的beforeMount了');
+                console.log(this.fruits);//现在可以拿到部署的数据了
+                this.d()//也可以调用部署的方法了
+                if (this.msg == 'aaa') {
+                    this.msg = '我是正确的数据'
+                }
+            },
+            // 数据  data methods 都拿到了  数据也到了 dom元素 页面上了  
+            //用户已经能看到了
+            mounted() {
+                // console.log('msg', this.msg);
+
+
+
+
+
+
+                // axios({
+                //     url: 'http://localhost:5006/vuestudy',
+                //     method: 'post',
+                //     data: {
+                //         username: 'post请求',
+                //         password: '123321'
+                //     }
+                // }).then(response => {
+                //     console.log(response)
+                // }).catch(error => {
+                //     console.log(error)
+                // })
+
+
+
+
+            },
+            //数据更新前
+            beforeUpdate() {
+                console.log('我进入beforeUpdate')
+            },
+            //数据更新后
+            updated() {
+                console.log('我进入updated')
+            },
+            //页面销毁之前
+            beforeDestroy() {
+                console.log('页面销毁之前')
+            },
+            //页面销毁之后
+            //页面销毁后，再进行页面中的操作无反应
+            destroyed() {
+                console.log('页面销毁之后')
+            }
+        })
+    </script>
+</body>
+
+</html>
